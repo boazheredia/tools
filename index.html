@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Altice RXG & Controller Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+  
+<header>Altice RXG & Controller Dashboard</header>
+
+<div class="container">
+  <div class="search-wrapper">
+    <input type="text" id="search" class="search-bar" placeholder="Search property...">
+    <span class="search-icon">&#128269;</span>
+  </div>
+  
+  <div class="dashboard" id="dashboard"></div>
+</div>
+
+
+<script>
+const defaultProperties = [
+  { name: "Arbors at Sam Houston", rxg: "https://myrxg-tx-arsh.srv.hnvitx.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1qoj10WlJYW2oZ_4k2cBayjA9V_vdWihD/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "304 Valley Pointe", rxg: "https://myrxg-wv-vapo.srv.hrcnwv.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Cd2c805c848fa4e6bb0c4d53dd140c52b/dashboard/", type: "Wired & Wireless", asbuilt: "" },
+  { name: "Lofts at Wolf Pen Creek", rxg: "https://myrxg-tx-lwpn.srv.clsttx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Ca81efb5a919349a5948e61ea67802b7f/dashboard/", type: "Wired & Wireless", asbuilt: "" },
+  { name: "Gateway at Huntsville", rxg: "https://myrxg-tx-gwht.srv.hnvitx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Caf0c25afe1f848839579a460d9f8b13b/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1vEuktf6MqJPGAAH660KDFqMGQsywvCmV/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Ridge", rxg: "https://myrxg-tx-trdg.srv.clsttx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Cf95c428973ea4bfbacc5bbb8a33943d9/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1LZ54jrTD-lEc13KtUzgVh1_AoweiEb5B/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Haverhill Apartment", rxg: "https://myrxg-tx-havh.srv.tylrtx.alticeusa.net/admin", controller: "https://myrxg-tx-havh.srv.tylrtx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1i5xCLnrqZd1u3FhLE1zmj1kJdm3Ska5V/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Avalon Wayne", rxg: "https://myrxg-nj-avwn.srv.waytnj.alticeusa.net/admin", controller: "https://myrxg-nj-avwn.srv.waytnj.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "" },
+  { name: "Belle Savanne", rxg: "https://myrxg-la-bsav.srv.slphla.alticeusa.net/admin", controller: "https://myrxg-la-bsav.srv.slphla.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/15Nl74TiTYjxsg2stUjMiJ5wjeXzr7uP8/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Prime Place 1 (315 Hester)", rxg: "https://myrxg-ok-ppon.srv.stwrok.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/16ZxSH94lsi0bsHWr4VWMQkPr0K7-EZx4/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Prime Place 2 (213 Elm)", rxg: "https://myrxg-ok-pptw.srv.stwrok.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "" },
+  { name: "Prime Place 3 (312 Elm)", rxg: "https://myrxg-ok-ppth.srv.stwrok.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1bkStcGkw-IEu9WPYcr2ircDTxrjLQX-9/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Pirates Cove", rxg: "https://myrxg-nc-pcov.srv.gnvlnc.alticeusa.net/admin", controller: "https://myrxg-nc-pcov.srv.gnvlnc.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1aVJID78CGaexIvhaXCHLbdZ-GIMTyn3_/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Domain at Northgate", rxg: "https://myrxg-tx-domn.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-domn.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1C4-UBcNBo50UFdun5tlYMlHhRFFD5Nii/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Morrison Lofts", rxg: "https://myrxg-tx-molo.srv.tylrtx.alticeusa.net/admin", controller: "https://myrxg-tx-molo.srv.tylrtx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1CfVYPzf0nnxDrtqXJPjl4_jLWVavzqHg/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Cambridge", rxg: "https://myrxg-tx-camb.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-camb.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1DnPYX3WiFeIQ5kxTqIzZ_VZfioNCANjy/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Meadow Lake", rxg: "https://myrxg-tx-mlsl.srv.tylrtx.alticeusa.net/admin", controller: "https://myrxg-tx-mlsl.srv.tylrtx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1PmRKMpSNYJTuq4W277KSWeVgVLixmWt-/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Pearl Apartments", rxg: "https://myrxg-tx-tper.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-tper.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/16hBClokSDOHDclLml4i46jQ6uLZl8NeW/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Evolve at Pines", rxg: "https://myrxg-nc-evtp.srv.gnvlnc.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Cc432be54b384400e8b2d5db924d86787/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/11qRSASBoq39IveaH9sh8uyhsvftZyNCZ/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "University Crossings", rxg: "https://myrxg-la-ucro.srv.rstnla.alticeusa.net/admin", controller: "https://myrxg-la-ucro.srv.rstnla.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1oA_ICi6viwaz1i_YFbBTdVAb1Fnldkxm/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Cherry Street", rxg: "https://myrxg-tx-chry.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-chry.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1A7TQ8s8Wa5iFmFCEI2eIO9AaOTNx22OX/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Gateway College Station (The Aria)", rxg: "https://myrxg-tx-gwcs.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-gwcs.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1j-7sSHvoeuh5nclTYkDfbbRQsZ2lm5kS/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "U Lofts", rxg: "https://myrxg-tx-ulof.srv.lbcktx.alticeusa.net/admin", controller: "https://myrxg-tx-ulof.srv.lbcktx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1Yv02TZ5oKClT_kwHmfEjSjZuj45JiVO0/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Reveille Ranch", rxg: "https://myrxg-tx-revr.srv.bryntx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7C9488eb36a70a475489e095a850dded56/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1UknfJDnJfxKPN8N1adONOsep9G6CjxWF/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Legends Canyon", rxg: "https://myrxg-tx-legc.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-legc.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/16mhltikVRsVekq7PYj1axQjjHMf2MNUw/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Avalon Parsipanny", rxg: "https://myrxg-nj-avps.srv.prnynj.alticeusa.net/admin", controller: "https://myrxg-nj-avps.srv.prnynj.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1x5Cq9MCaPbDJjd1-PXiCnHsbO7tTzsdZ/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Lark Northgate", rxg: "https://myrxg-tx-lang.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-lang.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1nUNEOEVBRdPNyUxS373S1jTSep2Hst7f/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Flatts on 12", rxg: "https://myrxg-tx-fltw.srv.clsttx.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/18hiwvFRjAdB8BWTwQdVEFCJLdDONd6ZU/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Trails at Wolf Pen Creek", rxg: "https://myrxg-tx-twpn.srv.clsttx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7C2318a4b3102e45e4be86c5595ad9e668/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1A5hqIB99gemxRQM6sETbThFtx3V_T69P/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Fifteen 12 at Bryan", rxg: "https://myrxg-tx-ftbr.srv.bryntx.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1fIpFWeNR3gf8eSh8_dQGD_07tPYWySSI/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Legends at Nacogdoches", rxg: "https://myrxg-tx-legn.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-legn.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1wJ_yWUBevA4ZRJPHf8Ns4nqL7OnD8703/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Lory of Bryan", rxg: "https://myrxg-tx-lobr.srv.bryntx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7C63559026e5f042c68fc1b984e9d71a4b/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/158MejS8aOeBcW34jxDUbTmO-NFPmy455/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Grand 1501", rxg: "https://myrxg-tx-tgrf.srv.clsttx.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7C6e70377509994144bd8198fbff8fbb01/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/16j1B2FiammxarZ7hwDL8TeSWix4UoAA-/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Sunset Pointe/The Voyager", rxg: "https://myrxg-nc-tvoy.srv.gnvlnc.alticeusa.net/admin", controller: "https://myrxg-nc-tvoy.srv.gnvlnc.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1ZMIz1rGpMIwAsyEBo0oYy74RuFTXJ8Hs/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Stillwater Flats", rxg: "https://dp1-ok-stlf.srv.stwrok.alticeusa.net/admin", controller: "", type: "Wired & Wireless - No Controller yet", asbuilt: "https://docs.google.com/spreadsheets/d/1BKNVJRasxEH-0UdwG20HgM3NgX2l5Hry/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Edge", rxg: "https://myrxg-tx-tedl.srv.lbcktx.alticeusa.net/admin", controller: "https://myrxg-tx-tedl.srv.lbcktx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1owjCmT6y6J0CS1d3VsnXvzLcAVXLeukF/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Lofts at Nacogdoches", rxg: "https://myrxg-tx-lofn.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-lofn.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1BSPd8UPHOafee4rF47dKI-Yrp3u1sxvc/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Scarlet", rxg: "https://myrxg-tx-sclt.srv.lbcktx.alticeusa.net/admin", controller: "https://myrxg-tx-sclt.srv.lbcktx.alticeusa.net:8443/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1eYTeNRE-dBZToQz0E_qMWo1dvjBMOcwZ/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Willowick", rxg: "https://myrxg-tx-wwap.srv.clsttx.alticeusa.net/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1WWTJKZcUEDcDFfQozfJ2g0kysQC0RnuL/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Bowers", rxg: "https://75.110.158.39/admin", controller: "https://75.110.158.39:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1rzavk-_fnxKjd4wHTEsssXGaXU07x9s9/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Horizon Student Living", rxg: "https://myrxg-nc-hzsl.srv.gnvlnc.alticeusa.net/admin", controller: "https://myrxg-nc-hzsl.srv.gnvlnc.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1reKagNmUmWcvR8nO9DupymQYRv8QriVC/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Quarterdeck", rxg: "https://myrxg-nc-qdsl.srv.gnvlnc.alticeusa.net/admin", controller: "https://myrxg-nc-qdsl.srv.gnvlnc.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1iw2vYIAfZe_g_QT1tNCE4nTrQFz_thIE/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Connection at Huntsville", rxg: "https://myrxg-tx-tcon.srv.hnvitx.alticeusa.net/admin", controller: "https://myrxg-tx-tcon.srv.hnvitx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1y0QACdgi8a-QanaVxdxG_rXTXWud8L78/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Ivy", rxg: "https://66.76.2.62/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7Cdefc2310d67741698d185bdecb9a9a08/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1WwRiP2dNhrbt5HtRkDj0AhqksvjbjWHc/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Sundance", rxg: "https://208.180.1.132/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1QdHNpMhTYIQyXRzRslexBK-25x8d-Inq/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Sausalito", rxg: "https://208.180.1.28/admin", controller: "", type: "Wired", asbuilt: "https://docs.google.com/spreadsheets/d/1vMbj7WrtL-2PoJAdFqBkARcOuEId6lfd/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Ranch at Arrington", rxg: "https://myrxg-tx-rnar.srv.clsttx.alticeusa.net/admin", controller: "https://myrxg-tx-rnar.srv.clsttx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1Jndde-kWBKk9iU3KUeYxdbRSZXIydR6B/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Angelo Place", rxg: "https://myrxg-tx-anpl.srv.sangtx.alticeusa.net/admin", controller: "https://myrxg-tx-anpl.srv.sangtx.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1PJMSRTkgYNKTE81R1zZRgJyMd96Pf6-o/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "The Oaks at Alexandria", rxg: "https://myrxg-la-toax.srv.alxnla.alticeusa.net/admin", controller: "https://us-e1-s29-5fjprv5q71.cloud.cambiumnetworks.com/#/OPTIMUMMDUPRODUCTION/home-view/managed/account/mgd_account=mgdAcc%7C0c17a2393001454096fc311559172540/dashboard/", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1S8mq4llILxG8NG3RsfXxI08yu6CeCT-B/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Avalon Bay Harrison", rxg: "https://myrxg-ny-avhn.srv.hrdnny.alticeusa.net/admin", controller: "https://myrxg-ny-avhn.srv.hrdnny.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1mTYvc8BwgW1fSHqCO9oeaBkKSEqHgLtp/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" },
+  { name: "Avalon Montville", rxg: "https://myrxg-nj-avmv.srv.pbmrnj.alticeusa.net/admin", controller: "https://myrxg-nj-avmv.srv.pbmrnj.alticeusa.net:8443/wsg", type: "Wired & Wireless", asbuilt: "https://docs.google.com/spreadsheets/d/1Gy8XOjMIxKLzcMG2Z8qcBbOQKqtjB3F6/edit?usp=drive_link&ouid=103154841736596095698&rtpof=true&sd=true" }
+];
+
+// Load properties, merging new defaults if necessary
+function loadProperties() {
+  const saved = JSON.parse(localStorage.getItem('properties')) || [];
+  const merged = [...defaultProperties];
+
+  saved.forEach(p => {
+    if(!merged.find(d => d.name === p.name)) merged.push(p);
+  });
+
+  localStorage.setItem('properties', JSON.stringify(merged));
+  return merged;
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+function renderDashboard(props){
+  const dash = document.getElementById("dashboard");
+  dash.innerHTML = "";
+  props.forEach((p,index)=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="property-name">${escapeHtml(p.name)}</div>
+      <div>🌐 <a href="${p.rxg}" target="_blank">RXG</a></div>
+      <div>💻 ${p.controller ? `<a href="${p.controller}" target="_blank">Controller</a>` : "Controller: ❌"}</div>
+      <div>📶 Type: ${escapeHtml(p.type)}</div>
+      <div>📄 ${p.asbuilt ? `<a href="${p.asbuilt}" target="_blank">As-Built</a>` : "As-Built: ❌"}</div>
+      <div class="card-buttons">
+      </div>
+    `;
+    dash.appendChild(card);
+  });
+}
+
+document.getElementById("search").addEventListener("input",function(){
+  const val = this.value.toLowerCase();
+  const filtered = loadProperties().filter(p => p.name.toLowerCase().includes(val) || p.type.toLowerCase().includes(val));
+  renderDashboard(filtered);
+});
+
+renderDashboard(loadProperties());
+</script>
+
+</body>
+</html>
+>
